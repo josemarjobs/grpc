@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"grpcdemo/pb"
 	"log"
@@ -41,22 +42,28 @@ func (s *employeeService) GetByBadgeNumber(ctx context.Context,
 	if md, ok := metadata.FromContext(ctx); ok {
 		fmt.Printf("Metadata: %+v\n", md)
 	}
-	return &pb.EmployeeResponse{
-		Employee: &employees[0],
-	}, nil
+	for _, e := range employees {
+		if e.BadgeNumber == req.BadgeNumber {
+			return &pb.EmployeeResponse{Employee: &e}, nil
+		}
+	}
+	return nil, errors.New("employee not found")
 }
 
 func (s *employeeService) GetAll(req *pb.GetAllRequest,
 	stream pb.EmployeeService_GetAllServer) error {
 	return nil
 }
+
 func (s *employeeService) Save(ctx context.Context,
 	req *pb.EmployeeRequest) (*pb.EmployeeResponse, error) {
 	return nil, nil
 }
+
 func (s *employeeService) SaveAll(stream pb.EmployeeService_SaveAllServer) error {
 	return nil
 }
+
 func (s *employeeService) AddPhoto(stream pb.EmployeeService_AddPhotoServer) error {
 	return nil
 }
