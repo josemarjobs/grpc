@@ -41,8 +41,11 @@ func (s *employeeService) GetByBadgeNumber(ctx context.Context,
 	if md, ok := metadata.FromContext(ctx); ok {
 		fmt.Printf("Metadata: %+v\n", md)
 	}
-	return nil, nil
+	return &pb.EmployeeResponse{
+		Employee: &employees[0],
+	}, nil
 }
+
 func (s *employeeService) GetAll(req *pb.GetAllRequest,
 	stream pb.EmployeeService_GetAllServer) error {
 	return nil
