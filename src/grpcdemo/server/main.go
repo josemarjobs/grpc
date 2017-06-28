@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"grpcdemo/pb"
 	"log"
 	"net"
@@ -9,6 +10,7 @@ import (
 
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/metadata"
 )
 
 const port = ":9000"
@@ -35,6 +37,10 @@ type employeeService struct {
 
 func (s *employeeService) GetByBadgeNumber(ctx context.Context,
 	req *pb.GetByBadgeNumberRequest) (*pb.EmployeeResponse, error) {
+
+	if md, ok := metadata.FromContext(ctx); ok {
+		fmt.Printf("Metadata: %+v\n", md)
+	}
 	return nil, nil
 }
 func (s *employeeService) GetAll(req *pb.GetAllRequest,
