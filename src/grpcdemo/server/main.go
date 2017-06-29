@@ -52,6 +52,10 @@ func (s *employeeService) GetByBadgeNumber(ctx context.Context,
 
 func (s *employeeService) GetAll(req *pb.GetAllRequest,
 	stream pb.EmployeeService_GetAllServer) error {
+	for _, e := range employees{
+		stream.Send(&pb.EmployeeResponse{Employee: &e})
+	}
+
 	return nil
 }
 

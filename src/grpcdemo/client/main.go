@@ -10,6 +10,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/metadata"
+	"io"
 )
 
 const serverHost = "localhost:9000"
@@ -40,6 +41,23 @@ func main() {
 	case 2:
 		log.Println("Getting by badge number: ", *badgeNumber)
 		getByBadgeNumber(client, *badgeNumber)
+	case 3:
+		log.Println("Getting all employees")
+		getAll(client)
+	}
+}
+
+func getAll(client pb.EmployeeServiceClient) {
+	stream, err := client.GetAll(context.Background(), &pb.GetAllRequest{})
+	if err != nil {
+		log.Fatal("Error getting all employees: ", err)
+	}
+	for {
+		res, err := stream.Recv()
+		if err == io.EOF {
+			break
+		}
+		log.Printf("Got employee: %v\n", res.Employee)
 	}
 }
 
