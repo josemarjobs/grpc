@@ -53,7 +53,7 @@ func (s *employeeService) GetByBadgeNumber(ctx context.Context,
 
 func (s *employeeService) GetAll(req *pb.GetAllRequest,
 	stream pb.EmployeeService_GetAllServer) error {
-	for _, e := range employees{
+	for _, e := range employees {
 		stream.Send(&pb.EmployeeResponse{Employee: &e})
 	}
 
@@ -62,10 +62,21 @@ func (s *employeeService) GetAll(req *pb.GetAllRequest,
 
 func (s *employeeService) Save(ctx context.Context,
 	req *pb.EmployeeRequest) (*pb.EmployeeResponse, error) {
-	return nil, nil
+	e := pb.Employee{
+		Id:                  int32(len(employees) + 1),
+		BadgeNumber:         req.Employee.BadgeNumber,
+		FirstName:           req.Employee.FirstName,
+		LastName:            req.Employee.LastName,
+		VacationAccrualRate: req.Employee.VacationAccrualRate,
+		VacationAccrued:     req.Employee.VacationAccrued,
+	}
+	employees = append(employees, e)
+
+	return &pb.EmployeeResponse{Employee: &e}, nil
 }
 
 func (s *employeeService) SaveAll(stream pb.EmployeeService_SaveAllServer) error {
+	
 	return nil
 }
 
