@@ -62,21 +62,30 @@ func (s *employeeService) GetAll(req *pb.GetAllRequest,
 
 func (s *employeeService) Save(ctx context.Context,
 	req *pb.EmployeeRequest) (*pb.EmployeeResponse, error) {
-	e := pb.Employee{
-		Id:                  int32(len(employees) + 1),
-		BadgeNumber:         req.Employee.BadgeNumber,
-		FirstName:           req.Employee.FirstName,
-		LastName:            req.Employee.LastName,
-		VacationAccrualRate: req.Employee.VacationAccrualRate,
-		VacationAccrued:     req.Employee.VacationAccrued,
-	}
+	e := *req.Employee
+	e.Id = int32(len(employees) + 1)
 	employees = append(employees, e)
 
 	return &pb.EmployeeResponse{Employee: &e}, nil
 }
 
 func (s *employeeService) SaveAll(stream pb.EmployeeService_SaveAllServer) error {
-	
+	for {
+		emp, err := stream.Recv()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return err
+		}
+		e := *emp.Employee
+		e.Id = int32(len(employees) + 1)
+		employees = append(employees, e)
+		stream.Send(&pb.EmployeeResponse{Employee: &e})
+	}
+	for _, e := range employees {
+		log.Println(e)
+	}
 	return nil
 }
 

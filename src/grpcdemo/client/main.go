@@ -49,7 +49,41 @@ func main() {
 	case 4:
 		log.Println("Adding Photo")
 		addPhoto(client, *badgeNumber, *filename)
+	case 5:
+		log.Println("Streaming employees")
+		saveAll(client)
 	}
+}
+
+func saveAll(client pb.EmployeeServiceClient) {
+	stream, err := client.SaveAll(context.Background())
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	doneCh := make(chan struct{})
+	go func() {
+		for {
+			resp, err := stream.Recv()
+			if err == io.EOF {
+				doneCh <- struct{}{}
+			}
+			if err != nil {
+				log.Fatal(err)
+			}
+			log.Println("Saved employee: %v\n", resp.Employee)
+		}
+	}()
+
+	for _, e := range newEmployees {
+		err = stream.Send(&pb.EmployeeRequest{Employee: &e})
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+
+	stream.CloseSend()
+	<- doneCh
 }
 
 func addPhoto(client pb.EmployeeServiceClient, badgeNumber int, filename string) {
