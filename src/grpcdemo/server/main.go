@@ -12,6 +12,7 @@ import (
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
+	"io"
 )
 
 const port = ":9000"
@@ -69,5 +70,22 @@ func (s *employeeService) SaveAll(stream pb.EmployeeService_SaveAllServer) error
 }
 
 func (s *employeeService) AddPhoto(stream pb.EmployeeService_AddPhotoServer) error {
+	md, ok := metadata.FromContext(stream.Context())
+	if ok {
+		fmt.Printf("Receiving photo for badge number: %v\n", md["badgenumber"])
+	}
+	imgData := []byte{}
+	for {
+		data, err := stream.Recv()
+		if err == io.EOF {
+			fmt.Println("Done, Final file size: ", len(imgData))
+			return stream.SendAndClose(&pb.AddPhotoResponse{IsOk: true})
+		}
+		if err != nil {
+			return err
+		}
+		fmt.Printf("Received %v bytes\n", len(data.Data))
+		imgData = append(imgData, data.Data...)
+	}
 	return nil
 }

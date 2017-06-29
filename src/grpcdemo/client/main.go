@@ -11,6 +11,8 @@ import (
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/metadata"
 	"io"
+	"strconv"
+	"os"
 )
 
 const serverHost = "localhost:9000"
@@ -18,7 +20,7 @@ const serverHost = "localhost:9000"
 func main() {
 	option := flag.Int("o", 1, "Command to run")
 	badgeNumber := flag.Int("b", 2080, "Badge number to get")
-
+	filename := flag.String("f", "img.jpg", "File to send.")
 	flag.Parse()
 
 	creds, err := credentials.NewClientTLSFromFile("cert.pem", "")
@@ -44,7 +46,44 @@ func main() {
 	case 3:
 		log.Println("Getting all employees")
 		getAll(client)
+	case 4:
+		log.Println("Adding Photo")
+		addPhoto(client, *badgeNumber, *filename)
 	}
+}
+
+func addPhoto(client pb.EmployeeServiceClient, badgeNumber int, filename string) {
+	f, err := os.Open(filename)
+	if err != nil {
+		log.Fatal("Error opening the file: ", err)
+	}
+	defer f.Close()
+	md := metadata.New(map[string]string{"badgenumber": strconv.Itoa(badgeNumber)})
+	ctx := metadata.NewContext(context.Background(), md)
+	stream, err := client.AddPhoto(ctx)
+	if err != nil {
+		log.Println(err)
+	}
+
+	for {
+		chunk := make([]byte, 64*1024) // 64kb
+		n, err := f.Read(chunk)
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			log.Fatal(err)
+		}
+		if n < len(chunk) {
+			chunk = chunk[:n]
+		}
+		stream.Send(&pb.AddPhotoRequest{Data: chunk})
+	}
+	res, err := stream.CloseAndRecv()
+	if err != nil {
+		log.Println(err)
+	}
+	log.Printf("Ok? %v", res.IsOk)
 }
 
 func getAll(client pb.EmployeeServiceClient) {
@@ -56,6 +95,9 @@ func getAll(client pb.EmployeeServiceClient) {
 		res, err := stream.Recv()
 		if err == io.EOF {
 			break
+		}
+		if err != nil {
+			log.Fatal("error: ", err)
 		}
 		log.Printf("Got employee: %v\n", res.Employee)
 	}
