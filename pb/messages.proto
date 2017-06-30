@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-option go_package="grpcdemo/pb";
+option go_package = "grpcdemo/pb";
 
 message Employee {
   int32 id = 1;
