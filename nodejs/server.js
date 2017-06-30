@@ -59,7 +59,7 @@ function addPhoto(call, callback) {
   console.log('Adding photo for: ' + badgeNumber);
 
   let result = new Buffer(0);
-  
+
   call.on('data', (data) => {
     result = Buffer.concat([result, data.data]);
     console.log('received ' + data.data.length + ' bytes');
@@ -72,7 +72,18 @@ function addPhoto(call, callback) {
 }
 
 function saveAll(call, callback) {
+  call.on('data', (e) => {
+    employees.push(e.employee);
+    call.write({employee: e.employee});
+  });
 
+  call.on('end', () => {
+    employees.forEach(e => {
+      console.log(e);
+    })
+
+    call.end();
+  })
 }
 
 function save(call, callback) {

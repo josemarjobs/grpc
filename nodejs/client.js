@@ -33,6 +33,39 @@ switch (option) {
   case 4:
     addPhoto(client);
     break;
+  case 5:
+    saveAll(client);
+    break;
+}
+
+function saveAll(client) {
+  const employees = [{
+      id: 6,
+      badgeNumber: 2081,
+      firstName: "Peter",
+      lastName: "Griffin",
+      vacationAccrualRate: 2,
+      vacationAccrued: 30
+    },{
+      id: 5,
+      badgeNumber: 7539,
+      firstName: "Lois",
+      lastName: "Griffin",
+      vacationAccrualRate: 2.3,
+      vacationAccrued: 23.4
+    }];
+
+    const call = client.saveAll();
+
+    call.on('data', (e) => {
+      console.log('saved: ', e.employee);
+    });
+
+    employees.forEach(e => {
+      call.write({employee: e});
+    });
+    
+    call.end();
 }
 
 function addPhoto(client) {
