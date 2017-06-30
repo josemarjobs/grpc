@@ -1,0 +1,23 @@
+<component name="libraryTable">
+  <library name="GOPATH &lt;project&gt;">
+    <CLASSES>
+      <root url="file://$USER_HOME$/go-workspace/src/gopkg.in" />
+      <root url="file://$USER_HOME$/go-workspace/src/labix.org" />
+      <root url="file://$USER_HOME$/go-workspace/src/golang.org" />
+      <root url="file://$USER_HOME$/go-workspace/src/github.com" />
+      <root url="file://$USER_HOME$/go-workspace/src/sourcegraph.com" />
+      <root url="file://$USER_HOME$/go-workspace/src/google.golang.org" />
+    </CLASSES>
+    <SOURCES>
+      <root url="file://$USER_HOME$/go-workspace/src/gopkg.in" />
+      <root url="file://$USER_HOME$/go-workspace/src/labix.org" />
+      <root url="file://$USER_HOME$/go-workspace/src/golang.org" />
+      <root url="file://$USER_HOME$/go-workspace/src/github.com" />
+      <root url="file://$USER_HOME$/go-workspace/src/sourcegraph.com" />
+      <root url="file://$USER_HOME$/go-workspace/src/google.golang.org" />
+    </SOURCES>
+    <excluded>
+      <root url="file://$PROJECT_DIR$" />
+    </excluded>
+  </library>
+</component>
