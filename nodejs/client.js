@@ -30,6 +30,33 @@ switch (option) {
   case 3:
     getAll(client);
     break;
+  case 4:
+    addPhoto(client);
+    break;
+}
+
+function addPhoto(client) {
+  let md = new grpc.Metadata();
+  md.add('badgenumber', '7538');
+  
+  const call = client.addPhoto(md, (err, result) => {
+    if (err) {
+      return console.log('Error: ', err);
+    }
+    console.log('Result: ', result);
+  });
+  let photo = '../img.jpg';
+  if (process.argv.length === 4) {
+    photo = process.argv[3];
+  }
+  const stream = fs.createReadStream(photo);
+  stream.on('data', (chunk) => {
+    call.write({data: chunk});
+  });
+
+  stream.on('end', () => {
+    call.end();
+  })
 }
 
 function getAll(client) {

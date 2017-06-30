@@ -54,7 +54,21 @@ function getAll(call) {
 }
 
 function addPhoto(call, callback) {
+  const md = call.metadata.getMap()
+  const badgeNumber = md['badgenumber'];
+  console.log('Adding photo for: ' + badgeNumber);
 
+  let result = new Buffer(0);
+  
+  call.on('data', (data) => {
+    result = Buffer.concat([result, data.data]);
+    console.log('received ' + data.data.length + ' bytes');
+  });
+
+  call.on('end', () => {
+    callback(null, {isOk: true});
+    console.log('Total file size: ', result.length);
+  });
 }
 
 function saveAll(call, callback) {
