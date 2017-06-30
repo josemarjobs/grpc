@@ -24,6 +24,18 @@ switch (option) {
   case 1:
     sendMetadata(client);
     break;
+  case 2:
+    getByBadgeNumber(client);
+    break;
+}
+
+function getByBadgeNumber(client) {
+  client.getByBadgeNumber({badgeNumber: 7538}, (err, resp) => {
+    if (err) {
+      return console.log('Error: ', err);
+    }
+    console.log('Employee found: ', resp.employee)
+  });
 }
 
 function sendMetadata(client) {

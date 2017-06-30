@@ -7,6 +7,7 @@ const grpc = require('grpc');
 const serviceDef = grpc.load(PROTO_PATH);
 
 const PORT = 9000;
+let employees = require('./employees');
 
 const cacert = fs.readFileSync('./certs/ca.crt');
 const cert = fs.readFileSync('./certs/server.crt');
@@ -34,7 +35,14 @@ function getByBadgeNumber(call, callback) {
   for (let key in md) {
     console.log(key, md[key])
   }
-  callback('error')
+  
+  const badgeNumber = call.request.badgeNumber;
+  for (let i = 0; i<employees.length; i++) {
+    if (employees[i].badgeNumber === badgeNumber) {
+      return callback(null, {employee: employees[i]}); 
+    }
+  }
+  callback(new Error('employee not found.'));
 }
 
 function getAll(call) {

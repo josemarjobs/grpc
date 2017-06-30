@@ -21,4 +21,4 @@ const employees = [{
 		vacationAccrued: 31.7
 }];
 
-exports.employees = employees;
+module.exports = employees;
