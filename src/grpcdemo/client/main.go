@@ -21,9 +21,34 @@ func main() {
 	option := flag.Int("o", 1, "Command to run")
 	badgeNumber := flag.Int("b", 2080, "Badge number to get")
 	filename := flag.String("f", "img.jpg", "File to send.")
+	//caCert := flag.String("ca", "certs/ca.crt", "CA Certificate to use")
+	cert := flag.String("cert", "certs/client.crt", "Certificate to use")
+	//key := flag.String("key", "certs/client.key", "Private Key to use")
 	flag.Parse()
 
-	creds, err := credentials.NewClientTLSFromFile("cert.pem", "")
+	//kvPair, err := tls.LoadX509KeyPair(*cert, *key)
+	//if err != nil {
+	//	log.Fatalln("Error loading key and cert files", err)
+	//}
+	//caCertPool := x509.NewCertPool()
+	//file, err := os.Open(*caCert)
+	//if err != nil {
+	//	log.Fatalln("Error reading CA Cert", err)
+	//}
+	//caCertBytes, err := ioutil.ReadAll(file)
+	//if err != nil {
+	//	log.Fatalln("Error reading CA Cert", err)
+	//}
+	//if !caCertPool.AppendCertsFromPEM(caCertBytes) {
+	//	log.Fatalln("Error creating auth configuration")
+	//}
+	//
+	//creds := credentials.NewTLS(&tls.Config{
+	//	Certificates: []tls.Certificate{kvPair},
+	//	RootCAs:      caCertPool,
+	//})
+
+	creds, err := credentials.NewClientTLSFromFile(*cert, "")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -83,7 +108,7 @@ func saveAll(client pb.EmployeeServiceClient) {
 	}
 
 	stream.CloseSend()
-	<- doneCh
+	<-doneCh
 }
 
 func addPhoto(client pb.EmployeeServiceClient, badgeNumber int, filename string) {
