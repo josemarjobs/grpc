@@ -46,7 +46,11 @@ function getByBadgeNumber(call, callback) {
 }
 
 function getAll(call) {
+  employees.forEach(employee => {
+    call.write({employee});
+  });
 
+  call.end();
 }
 
 function addPhoto(call, callback) {

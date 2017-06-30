@@ -27,6 +27,19 @@ switch (option) {
   case 2:
     getByBadgeNumber(client);
     break;
+  case 3:
+    getAll(client);
+    break;
+}
+
+function getAll(client) {
+  let call = client.getAll({});
+  call.on('data', (e) => {
+    console.log(e.employee);
+  });
+  call.on('end', () => {
+    console.log('Done.');
+  })
 }
 
 function getByBadgeNumber(client) {
