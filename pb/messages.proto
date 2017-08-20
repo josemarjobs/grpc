@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 option go_package = "grpcdemo/pb";
+option java_package = "com.kindelbit.grpc";
 
 message Employee {
   int32 id = 1;
